@@ -1,8 +1,9 @@
-# llm_agents.py
+# open-ended-discovery/src/llm_agents.py
 
 import json
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from typing import Optional, List
 from data_structures import RegexProblem
 
 # --- Model Loading (as per your snippet) ---
@@ -12,8 +13,9 @@ print("Loading Qwen/Qwen3-4B model... This may take a moment.")
 tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen3-4B")
 model = AutoModelForCausalLM.from_pretrained(
     "Qwen/Qwen3-4B",
-    torch_dtype="auto",
-    device_map="auto" # Automatically uses GPU if available
+    device_map="auto" , # Automatically uses GPU if available
+    load_in_8bit=True,  # or load_in_4bit=True
+    torch_dtype=torch.float16
 )
 print("Model loaded successfully.")
 
@@ -36,7 +38,7 @@ def ask_qwen(prompt: str, max_retries=3) -> str:
                 return_tensors="pt",
             ).to(model.device)
 
-            outputs = model.generate(**inputs, max_new_tokens=512, do_sample=True, temperature=0.7)
+            outputs = model.generate(**inputs, max_new_tokens=1024, do_sample=True, temperature=0.7)
             response = tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True)
             return response.strip()
         except Exception as e:
@@ -70,6 +72,9 @@ class ProblemGenerator:
             return RegexProblem(**data)
         except (json.JSONDecodeError, TypeError):
             print("ERROR: Failed to decode initial problem JSON from LLM.")
+            print("=="*20)
+            print(f"Generated response: \n {response}")
+            print("=="*20)
             return None
 
     def mutate_problem(self, seed_problem: RegexProblem) -> Optional[RegexProblem]:

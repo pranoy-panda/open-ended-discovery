@@ -1,4 +1,4 @@
-# main.py
+# open-ended-discovery/src/main.py
 
 import csv
 import json
