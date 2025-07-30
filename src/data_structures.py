@@ -32,52 +32,51 @@ class ArchiveCell:
     problem: Optional[RegexProblem] = None
     solution_regex: Optional[str] = None
     solved_at_round: Optional[int] = None
+    embedding: Optional[List[float]] = None
 
 class QualityDiversityArchive:
     """
     A grid to store a collection of problems that are both high-quality (solved) and
-    diverse (cover different types of challenges). This is the core of the QD approach,
-    preventing the system from only pursuing one type of difficulty.
+    diverse. This new version allows for improvement by replacing problems in a niche
+    if a more complex (higher level) one is solved.
     """
     def __init__(self):
-        # The archive is a dictionary where keys are diversity characteristics.
-        # For our task, the key is a string representing the primary regex concept.
         self.archive: Dict[str, ArchiveCell] = {}
+        self.STATUS_IMPROVED_NICHE = "IMPROVED_NICHE" # New status for replacement
+        self.STATUS_FILLED_NEW_NICHE = "FILLED_NEW_NICHE"
+        self.STATUS_NOT_ADDED = "NOT_ADDED"
 
     def get_coordinates(self, problem: RegexProblem) -> str:
-        """
-        Determines the "coordinates" of a problem in the archive based on its
-        most advanced concept.
-        """
-        # Simple mapping for demonstration. This can be made more sophisticated.
-        if "lookaround" in problem.concepts:
-            return "lookaround"
-        if "quantifier_range" in problem.concepts:
-            return "quantifier_range"
-        if "grouping" in problem.concepts:
-            return "grouping"
+        """Determines the 'coordinates' of a problem based on its concepts."""
+        if "backreference" in problem.concepts: return "backreference"
+        if "lookaround" in problem.concepts: return "lookaround"
+        if "quantifier_range" in problem.concepts: return "quantifier_range"
+        if "grouping" in problem.concepts: return "grouping"
         return "basic"
 
-    def add_to_archive(self, solution: RegexSolution, round_num: int) -> bool:
+    def add_to_archive(self, solution: RegexSolution, round_num: int) -> str:
         """
-        Adds a successfully solved problem to the archive.
-
-        It only adds the solution if the corresponding cell is empty, thus preserving
-        the first discovered solution for that niche. Returns True if added.
+        Adds a successfully solved problem to the archive. It will now replace an
+        existing problem in a niche if the new one has a higher level.
         """
         if not solution.succeeded:
-            return False
+            return self.STATUS_NOT_ADDED
 
         coords = self.get_coordinates(solution.problem)
-        if coords not in self.archive or self.archive[coords].problem is None:
+
+        # Check if the niche is empty OR if the new problem is better.
+        if coords not in self.archive or self.archive[coords].problem is None or self.archive[coords].problem.level < solution.problem.level:
+            is_improvement = coords in self.archive and self.archive[coords].problem is not None
+            
             self.archive[coords] = ArchiveCell(
                 problem=solution.problem,
                 solution_regex=solution.proposed_regex,
                 solved_at_round=round_num
             )
-            print(f"ARCHIVE: Added new problem to niche '{coords}'.")
-            return True
-        return False
+            # Return a different status if we replaced an old solution.
+            return self.STATUS_IMPROVED_NICHE if is_improvement else self.STATUS_FILLED_NEW_NICHE
+            
+        return self.STATUS_NOT_ADDED
 
     def get_all_solved_problems(self) -> List[RegexProblem]:
         """Returns all unique problems stored in the archive."""

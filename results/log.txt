@@ -1,0 +1,72 @@
+--- Starting QD-POET Regex Scientist ---
+Initializing semantic similarity ranker with Gemini embeddings...
+Embedding model loaded.
+
+--- Round 0: Seeding Process ---
+GENERATOR: Attempting to generate a certified seed problem...
+GENERATOR: Certification failed. Errors: ["False Positive on: 'banana 123'"]
+GENERATOR: Problem certified successfully.
+GENERATOR: Created seed problem (Level 1): 'Match strings that start with one or more lowercase letters, followed by one or more digits, and nothing else.'
+
+--- Round 1/5 ---
+Solving: 'Match strings that start with one or more lowercase letters, followed by one or more digits, and nothing else.'
+SOLVER: SUCCESS! Regex: ^[a-z]+\d+$
+SYSTEM: Verified concepts in solution: ['basic']
+Embedding and adding problem to knowledge base: 'Match strings that start with one or more lowercas...'
+QD: Groundbreaking! Discovered and solved a new problem type: 'basic'
+POET: Selected problem (Level 1) to evolve: 'Match strings that start with one or more lowercase letters, followed by one or more digits, and nothing else.'
+GENERATOR: Analyzing 1 successes and 0 failures to inform creation.
+GENERATOR: Attempting to generate a certified next problem...
+GENERATOR: Problem certified successfully.
+GENERATOR: Created new problem (Level 2): 'Match strings that start with one or more lowercase letters, followed by exactly three digits, and nothing else.'
+
+--- Round 2/5 ---
+Solving: 'Match strings that start with one or more lowercase letters, followed by exactly three digits, and nothing else.'
+SOLVER: SUCCESS! Regex: ^[a-z]+\d{3}$
+SYSTEM: Verified concepts in solution: ['basic', 'quantifier_range']
+Embedding and adding problem to knowledge base: 'Match strings that start with one or more lowercas...'
+QD: Groundbreaking! Discovered and solved a new problem type: 'quantifier_range'
+POET: Selected problem (Level 1) to evolve: 'Match strings that start with one or more lowercase letters, followed by one or more digits, and nothing else.'
+GENERATOR: Analyzing 2 successes and 0 failures to inform creation.
+GENERATOR: Attempting to generate a certified next problem...
+GENERATOR: Certification failed. Errors: ["False Negative on: 'xyz789'"]
+GENERATOR: Certification failed. Errors: ["False Positive on: 'lmn4567jkl'", "False Positive on: 'abc12defg'"]
+GENERATOR: Certification failed. Errors: ["False Negative on: 'a1b2c'", "False Negative on: 'xyz123'", "False Negative on: 'pqr789'"]
+WARN: Generator failed to create a valid problem after all attempts.
+WARN: Generator failed to create a valid new problem. Re-using mutation base for next round.
+
+--- Round 3/5 ---
+Solving: 'Match strings that start with one or more lowercase letters, followed by one or more digits, and nothing else.'
+SOLVER: SUCCESS! Regex: ^[a-z]+\d+$
+SYSTEM: Verified concepts in solution: ['basic']
+POET: Selected problem (Level 1) to evolve: 'Match strings that start with one or more lowercase letters, followed by one or more digits, and nothing else.'
+GENERATOR: Analyzing 2 successes and 0 failures to inform creation.
+GENERATOR: Attempting to generate a certified next problem...
+GENERATOR: Problem certified successfully.
+GENERATOR: Created new problem (Level 2): 'Match strings that start with one or more lowercase letters, followed by one or more digits, and then followed by one or more lowercase letters, and nothing else.'
+
+--- Round 4/5 ---
+Solving: 'Match strings that start with one or more lowercase letters, followed by one or more digits, and then followed by one or more lowercase letters, and nothing else.'
+SOLVER: FAILURE. Errors: ["False Negative on: 'a12b'", "False Negative on: 'xy789z'", "False Negative on: 'p0q'", "False Negative on: 'hello123world'"]
+SOLVER: FINAL FAILURE for problem: 'Match strings that start with one or more lowercase letters, followed by one or more digits, and then followed by one or more lowercase letters, and nothing else.'
+POET: Selected problem (Level 2) to evolve: 'Match strings that start with one or more lowercase letters, followed by exactly three digits, and nothing else.'
+GENERATOR: Analyzing 2 successes and 1 failures to inform creation.
+GENERATOR: Attempting to generate a certified next problem...
+GENERATOR: Certification failed. Errors: ["False Positive on: 'abc123def'"]
+GENERATOR: Certification failed. Errors: ["False Positive on: 'abc12defg'", "False Positive on: 'abc12defghijkl'"]
+GENERATOR: Certification failed. Errors: ["False Negative on: 'def1'", "False Positive on: 'abc1234'"]
+WARN: Generator failed to create a valid problem after all attempts.
+WARN: Generator failed to create a valid new problem. Re-using mutation base for next round.
+
+--- Round 5/5 ---
+Solving: 'Match strings that start with one or more lowercase letters, followed by exactly four digits, and nothing else.'
+SOLVER: SUCCESS! Regex: ^[a-z]+\d{4}$
+SYSTEM: Verified concepts in solution: ['basic', 'quantifier_range']
+POET: Selected problem (Level 2) to evolve: 'Match strings that start with one or more lowercase letters, followed by exactly four digits, and nothing else.'
+GENERATOR: Analyzing 2 successes and 1 failures to inform creation.
+GENERATOR: Attempting to generate a certified next problem...
+GENERATOR: Problem certified successfully.
+GENERATOR: Created new problem (Level 3): 'Match strings that start with one or more lowercase letters, followed by one or more digits, and then followed by one or more lowercase letters, and nothing else.'
+
+--- Discovery Complete. Saving outputs. ---
+Evolution log saved to outputs/evolution_log.csv

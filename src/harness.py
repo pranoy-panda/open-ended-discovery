@@ -3,6 +3,39 @@
 import re
 from data_structures import RegexProblem, RegexSolution
 
+def analyze_regex_concepts(regex_string: str) -> list[str]:
+    """
+    Analyzes a regex string to identify the concepts it uses.
+    This provides a more reliable way to categorize problems than trusting
+    the generator's self-reported labels.
+
+    Args:
+        regex_string: The successful regex pattern.
+
+    Returns:
+        A list of concept strings found in the regex.
+    """
+    concepts = {"basic"} # All regexes are at least basic
+    
+    # Check for backreferences (e.g., \1, \2)
+    if re.search(r"\\\d", regex_string):
+        concepts.add("backreference")
+        
+    # Check for lookarounds (e.g., (?=...), (?!...), (?<=...), (?<!...))
+    if "(?" in regex_string:
+        concepts.add("lookaround")
+        
+    # Check for quantifier ranges (e.g., {3,5})
+    if "{" in regex_string and "}" in regex_string:
+        concepts.add("quantifier_range")
+        
+    # Check for grouping, but exclude lookaround syntax
+    # A simple way is to check for parentheses that are not part of a lookaround
+    if "(" in regex_string and "(?" not in regex_string:
+         concepts.add("grouping")
+         
+    return sorted(list(concepts))
+
 def evaluate_solution(solution: RegexSolution) -> RegexSolution:
     """
     Deterministically evaluates a proposed regex against a problem's constraints.
